@@ -19,6 +19,15 @@ function toJSON(response){
   return response.json();
 }
 
+function addDeleteEventlisteners() {
+  const todoElements = document.querySelectorAll('.todo');
+  for (let todo of todoElements) {
+    todo.addEventListener('click', function () {
+      deleteTodo(this);
+    })
+  }
+}
+
 function fetchAllTodos() {
   fetch('/todos')
     .then(toJSON)
@@ -53,15 +62,6 @@ function handleSubmitForm(event) {
     completed: false
   }
   postTodo(newTodo);
-}
-
-function addDeleteEventlisteners(){
-  const todoElements = document.querySelectorAll('.todo');
-  for(let todo of todoElements){
-    todo.addEventListener('click', function(){
-      deleteTodo(this);
-    })
-  }
 }
 
 newTodoForm.addEventListener('submit', handleSubmitForm);
