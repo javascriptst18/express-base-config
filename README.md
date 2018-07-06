@@ -22,6 +22,18 @@ npm start
 ```
 4. Visit [`http://localhost:3000`](http://localhost:3000)
 
+### Nodemon
+
+Om du vill slippa starta om servern hela tiden
+
+1. Installera nodemon globalt
+```bash
+npm install -g nodemon
+```
+2. Kör igång dev-kommandot som kör nodemon (finns i `package.json`)
+```
+npm run dev
+```
 
 ## Uppgift
 
@@ -114,3 +126,48 @@ let todos = [
 **Givet**: att en användare lägger till `?q=Milk` i sin förfrågan till `/todos`: `GET /todos?q=Milk`
 
 **Så**: ska användaren få tillbaka alla todos var titel innehåller `Milk`.
+
+## Gränssnitt
+
+Du/ni ska skapa ett enklare gränssnitt där användaren kan interagera med APIet. Användaren ska via gränssnittet kunna utnyttja alla URLer i APIet och metoder kopplade till dessa URL. Själva APIet behöver inte ändras något (koden i `index.js`) utan ni ska enbart anropa ert API från frontend. Denna uppgift är väldigt lik CRUD-uppgiften vi gjorde tidigare så använd gärna den uppgiften som hjälp.
+
+> Om du inte hann klart med alla funktioner i APIet så kan du skapa ett gränssnitt för de funktioner som du hann klart med. Alternativt så finns det ett lösningsförslag under branchen `solution`. Alternativt kan du fortsätta med att implementera funktionerna i APIet.
+
+## Instruktioner
+
+I mappen `public` måste du ha en `index.html` samt en JavaScript-fil i samma mapp. Filerna i `public` fungerar på samma sätt som vi tidigare jobbat. Länka in en JavaScript-fil i `index.html` så laddas den in när du besöker `index.html`. Raderna nedan som finns i `./index.js` gör så att filen `index.html` levereras till användaren när vi besöker `http://localhost:3000`:
+
+```js
+app.get('/', function(request, response){
+  response.sendFile('index.html');
+})
+```
+
+För att kalla på dessa funktioner i APIet måste vi använda `fetch` (eller AJAX generellt) för att få ta del av informationen. Detta är som vi tidigare har gjort:
+
+```js
+fetch('/todos')
+    .then((response) => response.json())
+    .then((todos) => {
+        console.log(todos);
+    });
+```
+
+För att göra en `POST`-request samt alla andra metoder som inte är en `GET` måste vi ange metoden i ett extra objekt som vi skickar med varje förfrågan. I vårt fall så har vi ställt in att informationen som POSTas ska skickas och ta emot som JSON-data. Det betyder att vi måste ställa in detta i `fetch`-anropet. För att ange att en förfrågan ska tolkas som en viss typ av data måste vi ändra i `headers`. När vi får data från APIet så är det i form av JSON som vi måste konvertera till vanlig JavaScript (med `response.json()`/`JSON.parse()`). Det betyder att vi måste även skicka informationen som JSON. Detta gör vi med funktionen `JSON.stringify`:
+
+```js
+const newTodo = { 
+    title: 'Posty boy',
+    completed: false
+};
+
+fetch('/todos', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(newTodo)
+  });
+```
+

@@ -4,7 +4,7 @@ const app = express();
 app.use(express.static('public'));
 
 app.use(express.json()); // So we can handle JSON-data from the user
-app.use(express.urlencoded({ extended: false })); // So we can handle form-data from the user
+app.use(express.urlencoded({ extended: true })); // So we can handle form-data from the user
 
 let todos = [
   {
@@ -16,6 +16,10 @@ let todos = [
     completed: true
   }
 ];
+
+app.get('/', function(request, response){
+  response.sendFile('index.html');
+})
 
 app.get('/todos', function(request, response) {
   const limit = request.query.limit;
