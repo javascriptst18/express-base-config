@@ -27,11 +27,9 @@ const Todo = mongoose.model('Todo', {
 
 // ReST API
 
-app.get('/todos', function (request, response) {
-  Todo.find({})
-    .then((documents) => {
-      response.json(documents);
-    });
+app.get('/todos', async (request, response) => {
+  const documents = await Todo.find({})
+  response.json(documents);
 });
 
 app.post('/todos', function (request, response) {
