@@ -63,7 +63,7 @@ app.delete('/todos/:id', function (request, response) {
 app.patch('/todos/:id', function (request, response) {
   Todo.findByIdAndUpdate(request.params.id, {
     title: request.body.title
-  })
+  }, { new: true })
   .then(document => {
     response.json(document);
   })
