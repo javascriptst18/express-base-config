@@ -2,7 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 
-mongoose.connect('YOUR MLAB CONNECT STRING HERE');
+mongoose.connect(
+  'mongodb://javascriptst18:javascriptst18@ds125402.mlab.com:25402/javascriptst18'
+);
 
 app.use(express.static('public'));
 
@@ -20,32 +22,24 @@ let todos = [
   }
 ];
 
-app.get('/', function(request, response){
-  response.sendFile('index.html');
-})
+const Todo = mongoose.model('Todo', {
+  title: String,
+  completed: Boolean
+});
 
 app.get('/todos', function(request, response) {
-  const limit = request.query.limit;
-  if(limit){
-    /**
-     * Slice instead of map/filter/reduce because it's easier to grab a part of an array
-     * Just rememeber to use slice and not splice. Splice will manipulate the 'todos'-array
-     * while slice will extract a part of an array (non destructive). Start from 0 and end
-     * at the limit that the user sent in.
-     */
-    const limitedArray = todos.slice(0, limit);
-    response.send(limitedArray);
-  }
-  response.send(todos);
+  Todo.find({})
+    .then((documents) => {
+      response.json(documents);
+    })
 });
 
 app.post('/todos', function (request, response) {
-  /**
-   * request.body should contain { title: 'Title', completed: false }
-   * and is already formatted. Push the whole object into the array
-   */
-  todos.push(request.body);
-  response.send(todos); // Send the array back to see the update
+  const newTodo = new Todo({ title: request.body.title, completed: false });
+  newTodo.save()
+    .then(document => {
+      response.json(document);
+    });
 });
 
 app.get('/todos/:id', function (request, response) {
