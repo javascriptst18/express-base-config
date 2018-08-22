@@ -14,7 +14,7 @@ class App extends Component {
   }
 
   fetchTodos = () => {
-    fetch('http://localhost:4000/todos')
+    fetch('/todos')
       .then(response => response.json())
       .then(todos => {
         this.setState({ todos });
@@ -22,7 +22,7 @@ class App extends Component {
   }
 
   postTodo = () => {
-    fetch('http://localhost:4000/todos', {
+    fetch('/todos', {
       method: 'POST',
       headers: {
         'Content-Type' : 'application/json'
@@ -45,7 +45,7 @@ class App extends Component {
   }
 
   deleteTodo = (todo) => {
-    fetch(`http://localhost:4000/todos/${todo._id}`, {
+    fetch(`/todos/${todo._id}`, {
       method: 'DELETE'
     })
     .then(response => response.json())
@@ -63,7 +63,7 @@ class App extends Component {
   }
 
   patchTodo = (todo) => {
-    fetch(`http://localhost:4000/todos/${todo._id}`, {
+    fetch(`/todos/${todo._id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
