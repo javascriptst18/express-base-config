@@ -9,7 +9,7 @@ mongoose.connect(
   'mongodb://javascriptst18:javascriptst18@ds125402.mlab.com:25402/javascriptst18'
 );
 
-app.use(express.static('public'));
+app.use(express.static('frontend/build'));
 
 app.use(express.json()); // So we can handle JSON-data from the user
 app.use(express.urlencoded({ extended: true })); // So we can handle form-data from the user
@@ -26,6 +26,10 @@ const Todo = mongoose.model('Todo', {
 });
 
 // ReST API
+
+app.get('/', (request, response ) => {
+  response.sendFile('index');
+});
 
 app.get('/todos', async (request, response) => {
   const documents = await Todo.find({})
