@@ -1,6 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const app = express();
+
+app.use(cors());
 
 mongoose.connect(
   'mongodb://javascriptst18:javascriptst18@ds125402.mlab.com:25402/javascriptst18'
@@ -18,7 +21,7 @@ const Todo = mongoose.model('Todo', {
   },
   completed: {
     type: Boolean,
-    default: false
+    default: 'false'
   }
 });
 
@@ -40,14 +43,16 @@ app.post('/todos', function (request, response) {
 });
 
 app.get('/todos/:id', function (request, response) {
-  Todo.findById(request.params.id)
+  Todo
+    .findById(request.params.id)
     .then(document => {
       response.json(document);
     })
 });
 
 app.delete('/todos/:id', function (request, response) {
-  Todo.findByIdAndRemove(request.params.id)
+  Todo
+    .findByIdAndRemove(request.params.id)
     .then(document => {
       response.json(document);
     })
