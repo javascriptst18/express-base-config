@@ -10,6 +10,7 @@
   "author": "Jesper Orb <jesperorb@gmail.com> (https://jesperorb.com/)",
   "license": "MIT",
   "dependencies": {
-    "express": "4.16.3"
+    "express": "4.16.3",
+    "mongoose": "5.2.9"
   }
 }

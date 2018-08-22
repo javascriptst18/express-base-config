@@ -1,5 +1,8 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const app = express();
+
+mongoose.connect('YOUR MLAB CONNECT STRING HERE');
 
 app.use(express.static('public'));
 
