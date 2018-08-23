@@ -42,18 +42,21 @@ const User = mongoose.model('User', UserSchema);
  * use a local strategy, which means that we will
  * use the regular username/password login
  */
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(User.createStrategy());
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+app.use(passport.initialize()); // Tell express to use passport
+app.use(passport.session()); // Tell passport to use session to save user 
+passport.use(User.createStrategy()); // Tell passport to use standard strategy: email/password
+passport.serializeUser(User.serializeUser()); // Hash/salt tactict
+passport.deserializeUser(User.deserializeUser()); // hash/salt tactics
 
 // Function for checking if user is allowed to visit an URL
-function isLoggedIn(request, response, next){
+function isLoggedIn(request, response, next) {
   if (request.isAuthenticated()) {
     return next(); //next() means -> continue and forward request
   }
-  response.json('Unauthorized');
+  response.status(401).json({
+    type: 'ERROR',
+    message: 'Unauthorized'
+  }); // If user is not logged in, send json-error message
 }
 
 /**
@@ -61,6 +64,8 @@ function isLoggedIn(request, response, next){
  * and if the user has the right credentials. If the login is
  * successful the request object will have a 'user'-property. This
  * user will be available in all requests inside of 'request.user'
+ * Send both username and id to frontend. If login failed,
+ * express will send a error message: Unauthorized
  */
 app.post('/login', passport.authenticate('local'), (request, response) => {
   response.json({
@@ -70,7 +75,13 @@ app.post('/login', passport.authenticate('local'), (request, response) => {
 });
 
 app.get('/logout', (request, response) => {
+  // Passport function to remove session from server
   request.logout();
+  // Could be a good idea to send a message as feedback to frontend
+  response.json({
+    type: 'SUCCESS',
+    message: 'Logout successful'
+  })
 })
 
 /**
@@ -83,10 +94,14 @@ app.get('/logout', (request, response) => {
 app.post('/register', (request, response) => {
   User.register(new User({ username: request.body.username }), request.body.password, (err, user) => {
     if (err) {
-      response.json(err);
+      response.status(500).json(err);
     }
     passport.authenticate('local')(request, response, () => {
-      response.json('User registered');
+      // Send a response-object if user is successfully registered
+      response.json({
+        type: 'SUCCESS',
+        message: 'User registered'
+      });
     });
   });
 });
@@ -131,7 +146,7 @@ app.post('/todos', isLoggedIn, function (request, response) {
     });
 });
 
-app.get('/todos/:id', function (request, response) {
+app.get('/todos/:id', isLoggedIn ,function (request, response) {
   Todo
     .findById(request.params.id)
     .then(document => {
@@ -139,7 +154,7 @@ app.get('/todos/:id', function (request, response) {
     })
 });
 
-app.delete('/todos/:id', function (request, response) {
+app.delete('/todos/:id', isLoggedIn, function (request, response) {
   Todo
     .findByIdAndRemove(request.params.id)
     .then(document => {
@@ -147,7 +162,7 @@ app.delete('/todos/:id', function (request, response) {
     })
 });
 
-app.patch('/todos/:id', function (request, response) {
+app.patch('/todos/:id', isLoggedIn, function (request, response) {
   Todo.findByIdAndUpdate(request.params.id, {
     title: request.body.title
   }, { new: true })
