@@ -14,7 +14,9 @@ class App extends Component {
   }
 
   fetchTodos = () => {
-    fetch('/todos')
+    fetch('/todos', {
+      credentials: 'same-origin'
+    })
       .then(response => response.json())
       .then(todos => {
         this.setState({ todos });
@@ -24,9 +26,11 @@ class App extends Component {
   postTodo = () => {
     fetch('/todos', {
       method: 'POST',
+      credentials: 'same-origin',
       headers: {
         'Content-Type' : 'application/json'
       },
+      credentials: 'include'
       body: JSON.stringify({ title: this.state.todoValue })
     })
     .then(response => response.json())
@@ -46,7 +50,8 @@ class App extends Component {
 
   deleteTodo = (todo) => {
     fetch(`/todos/${todo._id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      credentials: 'same-origin'
     })
     .then(response => response.json())
     .then(removedTodo => {
@@ -65,6 +70,7 @@ class App extends Component {
   patchTodo = (todo) => {
     fetch(`/todos/${todo._id}`, {
       method: 'PATCH',
+      credentials: 'same-origin'
       headers: {
         'Content-Type': 'application/json'
       },

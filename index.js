@@ -18,7 +18,7 @@ app.use(express.json()); // So we can handle JSON-data from the user
 app.use(express.urlencoded({ extended: true })); // So we can handle form-data from the user
 app.use(cookieParser()); // saves cookies to request.cookies
 app.use(session({
-  secret: "sshh",
+  secret: "asdasdasd",
   resave: true,
   saveUninitialized: false
 })); // Initialise session in express, save who is logged in to the server
@@ -108,7 +108,7 @@ app.get('/todos', async (request, response) => {
   response.json(documents);
 });
 
-app.post('/todos', function (request, response) {
+app.post('/todos', isLoggedIn , function (request, response) {
   const newTodo = new Todo({ title: request.body.title });
   newTodo.save()
     .then(document => {
