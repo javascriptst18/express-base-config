@@ -1,7 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const app = express();
+const passport = require('passport');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const passportLocalMongoose = require('passport-local-mongoose');
 const cors = require('cors');
+const app = express();
 
 app.use(cors());
 
@@ -13,17 +17,73 @@ app.use(express.static('public'));
 app.use(express.json()); // So we can handle JSON-data from the user
 app.use(express.urlencoded({ extended: true })); // So we can handle form-data from the user
 
-/* let todos = [
-  {
-    title: 'Learn Backend',
-    completed: false
-  },
-  {
-    title: 'Learn to learn',
-    completed: true
-  }
-];
+app.use(cookieParser()); // saves cookies to request.cookies
+app.use(session({
+  secret: "sshh",
+  resave: true,
+  saveUninitialized: false
+})); // Initialise session in express, save who is logged in to the server
+
+//Basic user has username and password, bare minimum
+const UserSchema = new mongoose.Schema({
+  username: String,
+  password: String
+});
+
+// passport-local-mongoose library that handles all login-logic,
+// which means that we need to write less code
+UserSchema.plugin(passportLocalMongoose);
+const User = mongoose.model('User', UserSchema);
+
+/**
+ * Standard Passport configuration included in most
+ * express-app that has authorization. We tell express
+ * to use the library passport and to store the user
+ * in a session. We also tell passport that we will
+ * use a local strategy, which means that we will
+ * use the regular username/password login
  */
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+// Function for checking if user is allowed to visit an URL
+function isLoggedIn(request, response, next){
+  if (request.isAuthenticated()) {
+    return next(); //next() means -> continue and forward request
+  }
+  response.json('Unauthorized');
+}
+
+/**
+ * passport.authenticate() will handle checking if the user exists
+ * and if the user has the right credentials. If the login is
+ * successful the request object will have a 'user'-property. This
+ * user will be available in all requests inside of 'request.user'
+ */
+app.post('/login', passport.authenticate('local'), (request, response) => {
+  response.json(request.user.username);
+});
+
+/**
+ * We are creating a new user like we did with Todo, but because of
+ * passport we need to call the function User.register. If the user
+ * already exists we will get an error, if the registration is successful
+ * we can either send back the user or like in this case say that
+ * the register is successful
+ */
+app.post('/register', (request, response) => {
+  User.register(new User({ username: request.body.username }), request.body.password, (err, user) => {
+    if (err) {
+      response.json(err);
+    }
+    passport.authenticate('local')(request, response, () => {
+      response.json('User registered');
+    });
+  });
+});
 
 // mongodb schema often in seperate file 
 const Todo = mongoose.model('Todo', {
@@ -48,7 +108,7 @@ app.get('/todos', function(request, response) {
 
 // För att skapa och lägga till i db
 // info från användaren hamnar alltid i body (request.body.title)
-app.post('/todos', function (request, response) {
+app.post('/todos' isLoggedIn , function (request, response) {
   const newTodo = new Todo({ title: request.body.title, completed: false});
   newTodo.save()
   // Efter vrje route måste man skicka ut med response för att få feedback

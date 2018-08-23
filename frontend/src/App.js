@@ -6,7 +6,12 @@ class App extends Component {
   state = {
     todos: [],
     deleteText: "",
-    postText: ""
+    postText: "",
+    authenticated: false,
+    userInput: "",
+    passwordInput: "",
+    registerUser: "",
+    registerPassword: ""
   }
 
   componentDidMount(){
@@ -18,6 +23,36 @@ class App extends Component {
 
   onChangeInput = (event) => {
     this.setState({ [event.target.name]: event.target.value})
+  }
+
+  register = () => {
+   /*  fetch('http://localhost:4000/register', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Conent-Type':
+      }
+    }) */
+  }
+
+  login = () => {
+    fetch('http://localhost:4000/login', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify({ 
+        username: this.state.userInput,
+        password: this.state.passwordInput
+      })
+    })
+      .then(response => response.json())
+      .then(loginResponse => {
+        if( loginResponse === this.state.userInput ){
+          this.setState({ authenticated: true })
+        }
+      })
   }
 
   // Standard fetch parametrar
@@ -75,23 +110,64 @@ class App extends Component {
 
     return (
       <div className="App">
-        <label htmlFor="postText">Post</label>
-        <input 
-          type="text"
-          name="postText"
-          value={this.state.postText}
-          onChange={this.onChangeInput}
-        />
-        <button onClick={this.postTodo}>Post from frontend</button>
-        <label htmlFor="deleteText">Delete a post by title</label>
-        <input 
-          type="text"
-          name="deleteText"
-          value={this.state.deleteText}
-          onChange={this.onChangeInput}
-        />
-        <button onClick={this.deleteTodo}>Delete todo</button>
-        { listOfTodos }
+        <div>
+          <h2>Register</h2>
+          <label>Username</label>
+          <input 
+            type="text"
+            name="registerUser"
+            value={this.state.registerUser}
+            onChange={this.onChangeInput}
+          />
+          <label>Password</label>
+          <input 
+            type="password"
+            name="registerPassword"
+            value={this.state.registerPassword}
+            onChange={this.onChangeInput}
+          />
+          <button onClick={this.login}>Register</button>
+        </div>
+
+        <div>
+          <h2>Login</h2>
+          <label>Username</label>
+          <input 
+            type="text"
+            name="userInput"
+            value={this.state.userInput}
+            onChange={this.onChangeInput}
+          />
+          <label>Password</label>
+          <input 
+            type="password"
+            name="passwordInput"
+            value={this.state.passwordInput}
+            onChange={this.onChangeInput}
+          />
+          <button onClick={this.login}>Login</button>
+        </div>
+        { this.state.authenticated &&
+          <React.Fragment>
+          <label htmlFor="postText">Post</label>
+          <input 
+            type="text"
+            name="postText"
+            value={this.state.postText}
+            onChange={this.onChangeInput}
+          />
+          <button onClick={this.postTodo}>Post from frontend</button>
+          <label htmlFor="deleteText">Delete a post by title</label>
+          <input 
+            type="text"
+            name="deleteText"
+            value={this.state.deleteText}
+            onChange={this.onChangeInput}
+          />
+          <button onClick={this.deleteTodo}>Delete todo</button>
+          { listOfTodos }
+          </React.Fragment>
+        }
       </div>
     );
   }
