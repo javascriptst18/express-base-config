@@ -63,8 +63,15 @@ function isLoggedIn(request, response, next){
  * user will be available in all requests inside of 'request.user'
  */
 app.post('/login', passport.authenticate('local'), (request, response) => {
-  response.json(request.user.username);
+  response.json({
+    username: request.user.username,
+    _id: request.user._id
+  });
 });
+
+app.get('/logout', (request, response) => {
+  request.logout();
+})
 
 /**
  * We are creating a new user like we did with Todo, but because of
@@ -96,6 +103,9 @@ const Todo = mongoose.model('Todo', {
   completed: {
     type: Boolean,
     default: 'false'
+  },
+  username: {
+    type: String
   }
 });
 
@@ -103,13 +113,18 @@ app.get('/', (request, response ) => {
   response.sendFile('index');
 });
 
-app.get('/todos', async (request, response) => {
-  const documents = await Todo.find({})
-  response.json(documents);
+app.get('/todos', (request, response) => {
+  Tod.find({ username: request.user.username })
+    .then(documents => {
+      response.json(documents);
+    })
 });
 
-app.post('/todos', isLoggedIn , function (request, response) {
-  const newTodo = new Todo({ title: request.body.title });
+app.post('/todos', isLoggedIn, function (request, response) {
+  const newTodo = new Todo({ 
+    title: request.body.title,
+    username: request.user.username
+  });
   newTodo.save()
     .then(document => {
       response.json(document);

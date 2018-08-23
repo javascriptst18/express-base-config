@@ -23,6 +23,23 @@ class App extends Component {
       })
   }
 
+  login = () => {
+    fetch('/login', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type' : 'application/json'
+      },
+      body: JSON.stringify({ 
+        username: this.state.username,
+        password: this.state.password 
+      })
+    }).then(response => response.json())
+      .then(user => {
+        this.setState({ user });
+      })
+  }
+
   postTodo = () => {
     fetch('/todos', {
       method: 'POST',
@@ -30,8 +47,10 @@ class App extends Component {
       headers: {
         'Content-Type' : 'application/json'
       },
-      credentials: 'include'
-      body: JSON.stringify({ title: this.state.todoValue })
+      body: JSON.stringify({ 
+        title: this.state.todoValue,
+        username: this.state.username 
+      })
     })
     .then(response => response.json())
     .then(addedTodo => {
