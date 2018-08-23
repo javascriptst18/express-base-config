@@ -10,7 +10,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.fetchTodos();
   }
 
   fetchTodos = () => {
@@ -31,12 +30,13 @@ class App extends Component {
         'Content-Type' : 'application/json'
       },
       body: JSON.stringify({ 
-        username: this.state.username,
-        password: this.state.password 
+        username: "test",
+        password: "test"
       })
     }).then(response => response.json())
       .then(user => {
         this.setState({ user });
+        this.fetchTodos();
       })
   }
 
@@ -89,7 +89,7 @@ class App extends Component {
   patchTodo = (todo) => {
     fetch(`/todos/${todo._id}`, {
       method: 'PATCH',
-      credentials: 'same-origin'
+      credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -150,6 +150,7 @@ class App extends Component {
       <label htmlFor="patchTodoValue" style={{ display: 'block'}}>
         Update value here
       </label>
+      <button onClick={this.login}>Login</button>
         <input
           type="text"
           value={this.state.patchTodoValue}

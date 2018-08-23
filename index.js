@@ -113,8 +113,8 @@ app.get('/', (request, response ) => {
   response.sendFile('index');
 });
 
-app.get('/todos', (request, response) => {
-  Tod.find({ username: request.user.username })
+app.get('/todos', isLoggedIn , (request, response) => {
+  Todo.find({ username: request.user.username })
     .then(documents => {
       response.json(documents);
     })
