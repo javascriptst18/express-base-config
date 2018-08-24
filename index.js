@@ -108,7 +108,7 @@ app.get('/todos', function(request, response) {
 
 // För att skapa och lägga till i db
 // info från användaren hamnar alltid i body (request.body.title)
-app.post('/todos' isLoggedIn , function (request, response) {
+app.post('/todos', function (request, response) {
   const newTodo = new Todo({ title: request.body.title, completed: false});
   newTodo.save()
   // Efter vrje route måste man skicka ut med response för att få feedback
