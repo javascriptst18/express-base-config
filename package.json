@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "test" : "jest --forceExit"
   },
   "author": "Jesper Orb <jesperorb@gmail.com> (https://jesperorb.com/)",
   "license": "MIT",
@@ -14,8 +15,10 @@
     "cors": "2.8.4",
     "express": "4.16.3",
     "express-session": "1.15.6",
+    "jest": "23.5.0",
     "mongoose": "5.2.9",
     "passport": "0.4.0",
-    "passport-local-mongoose": "5.0.1"
+    "passport-local-mongoose": "5.0.1",
+    "supertest": "3.1.0"
   }
 }
