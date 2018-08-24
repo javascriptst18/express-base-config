@@ -7,33 +7,35 @@ class App extends Component {
 
   state = {
     todos: [],
-    user: ''
+    user: '',
+    error: '',
+    isLoading: false
   }
 
   componentDidMount(){
-    fetch('/checkLoggedInState', {
-      credentials: 'same-origin'
-    }).then(response => response.json())
-    .then(user => {
-      this.setState({ user })
-    })
+    const user = localStorage.getItem('user');
+    if(user){
+      this.setState({ user: JSON.parse(user) });
+      this.fetchTodos();
+    }
   }
 
   login = (user) => {
     this.setState({ user });
+    localStorage.setItem('user', JSON.stringify(user));
     this.fetchTodos();
   }
 
   fetchTodos = () => {
+    this.setState({ isLoading: true })
     fetch('/todos', {
       credentials: 'same-origin'
     })
     .then(response => response.json())
-    .then(todos => this.setState({ todos }))
+    .then(todos => this.setState({ todos, isLoading: false }))
   }
 
   filterTodos = (removedTodo) => {
-    console.log(removedTodo);
     const updatedTodos = this.state.todos.filter(todo => {
       return todo._id !== removedTodo._id;
     })
