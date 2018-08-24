@@ -12,6 +12,8 @@ mongoose.connect(
   { useNewUrlParser: true }
 ); // Connect to mLab mongodb database
 
+mongoose.set('useFindAndModify', false);
+
 app.use(cors()); // Allow all domains to connect to the server
 app.use(express.static('frontend/build')); // Deliver react-frontend
 app.use(express.json()); // So we can handle JSON-data from the user

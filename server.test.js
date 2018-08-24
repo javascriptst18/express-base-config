@@ -16,6 +16,7 @@ describe('todo routes', () => {
     mongoose.connect('mongodb://javascriptst18:javascriptst18@ds125402.mlab.com:25402/javascriptst18', {
       useNewUrlParser: true 
     });
+
     request(app)
       .post('/login')
       .send({
