@@ -39,4 +39,22 @@ describe('todo routes', () => {
     await mongoose.connection.close();
     await mongoose.disconnect();
   });
+
+
+  it('GET /todos', () => {
+    return request(app)
+            .get('/todos')
+            .expect(200)
+  });
+
+  it('POST /todos', () => {
+    return request(app)
+            .post('/todos')
+            .send({ title: 'More tests please' })
+            .set('cookie', cookie)
+            .expect(200)
+            .then(response => {
+              expect(response.body.title).toBe('More tests please');
+            });
+  })
 })
