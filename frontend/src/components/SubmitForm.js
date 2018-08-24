@@ -6,12 +6,11 @@ class SubmitForm extends React.Component {
     newTodo: ''
   }
 
-
   onChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   }
 
-  onSubmit = event => {
+  onSubmit = (event) => {
     event.preventDefault();
     this.postTodo();
   }
@@ -23,10 +22,16 @@ class SubmitForm extends React.Component {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ title: this.state.newTodo})
+      body: JSON.stringify({ title: this.state.newTodo })
     })
     .then(response => response.json())
     .then(newTodo => {
+      /**
+       * Because all todos are inside of <App> we must update the state
+       * in app by calling the function pushTodo inside of <App>, this function
+       * is being sent down via props. newTodo is the POSTed todo that is returned
+       * from the backend side. 
+       */
       this.props.pushTodo(newTodo);
     })
   }
@@ -39,6 +44,7 @@ class SubmitForm extends React.Component {
         name="newTodo"
         value={this.state.newTodo}
         onChange={this.onChange}
+        className="form-control"
       />
       <button className="btn btn-primary" type="submit">
         Skicka
