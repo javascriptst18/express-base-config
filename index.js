@@ -84,6 +84,16 @@ app.get('/logout', (request, response) => {
   })
 })
 
+app.get('/checkLoggedInState', (request, response) => {
+  if(request.user){
+    return {
+      username: request.user.username,
+      _id: request.user._id
+    }
+  }
+  return '';
+})
+
 /**
  * We are creating a new user like we did with Todo, but because of
  * passport we need to call the function User.register. If the user
